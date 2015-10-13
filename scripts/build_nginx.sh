@@ -14,14 +14,13 @@ PCRE_VERSION=${PCRE_VERSION-8.37}
 ZLIB_VERSION=${ZLIB_VERSION-1.2.8}
 
 nginx_tarball_url=http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz
-pcre_tarball_url=http://garr.dl.sourceforge.net/project/pcre/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.bz2
+pcre_tarball_url=http://downloads.sourceforge.net/project/pcre/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.bz2
 zlib_url=http://zlib.net/zlib-${ZLIB_VERSION}.tar.gz
+srvdir_url=https://raw.githubusercontent.com/scottmotte/srvdir-binary/master/srvdir.tar.gz 
 
 temp_dir=$(mktemp -d /tmp/nginx.XXXXXXXXXX)
 
-echo "Serving files from /tmp on $PORT"
 cd /tmp
-python -m SimpleHTTPServer $PORT &
 
 cd $temp_dir
 echo "Temp dir: $temp_dir"
@@ -48,8 +47,8 @@ echo "Downloading $zlib_url"
   make install
 )
 
-while true
-do
-  sleep 1
-  echo "."
-done
+echo "Downloading $srvdir_url"
+cd $temp_dir
+curl -L $srvdir_url | tar xzv
+
+$temp_dir/srvdir
