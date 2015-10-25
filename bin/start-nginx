@@ -5,7 +5,7 @@ rm -f $psmgr
 mkfifo $psmgr
 
 #Evaluate config to get $PORT
-erb config/nginx.conf.erb > config/nginx.conf
+erb config/nginx/nginx.conf.erb > config/nginx/nginx.conf
 
 n=1
 while getopts :f option ${@:1:2}
@@ -17,15 +17,15 @@ do
 done
 
 #Initialize log directory.
-mkdir -p logs/nginx
-touch logs/nginx/access.log logs/nginx/error.log
+mkdir -p log/nginx
+touch log/nginx/access.log log/nginx/error.log
 echo 'buildpack=nginx at=logs-initialized'
 
 #Start log redirection.
 (
     # Redirect NGINX logs to stdout.
-    tail -qF -n 0 logs/nginx/*.log
-    echo 'logs' >$psmgr
+    tail -qF -n 0 log/nginx/*.log
+    echo 'log' >$psmgr
 ) &
 
 #Start App Server
@@ -57,7 +57,7 @@ fi
     # We expect nginx to run in foreground.
     # We also expect a socket to be at /tmp/nginx.socket.
     echo 'buildpack=nginx at=nginx-start'
-    bin/nginx -p . -c config/nginx.conf
+    bin/nginx -p . -c config/nginx/nginx.conf
     echo 'nginx' >$psmgr
 ) &
 
